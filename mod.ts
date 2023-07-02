@@ -53,13 +53,7 @@ export class Requester {
     const url = new URL(
       `${opts.protocol}://${opts.hostname}:${opts.port}`,
     );
-    url.hash = opts.hash;
-    url.pathname = opts.pathname;
-    url.username = opts.username;
-    url.password = opts.password;
-    for (const [key, value] of opts.searchParams.entries()) {
-      url.searchParams.set(key, value);
-    }
+    setURLParameters(url, options);
     this.baseURL = url;
     this.requestInit = opts.requestInit ?? {};
     this.requestInit.body = opts.body;
@@ -76,17 +70,7 @@ export class Requester {
     const url = new URL(this.baseURL);
     url.pathname = path + pathname;
     if (options) {
-      if (options.hash) url.hash = options.hash;
-      if (options.hostname) url.hostname = options.hostname;
-      if (options.password) url.password = options.password;
-      if (options.port) url.port = String(options.port);
-      if (options.protocol) url.protocol = options.protocol;
-      if (options.searchParams) {
-        for (const [key, value] of options.searchParams.entries()) {
-          url.searchParams.set(key, value);
-        }
-      }
-      if (options.username) url.username = options.username;
+      setURLParameters(url, options);
     }
     return url;
   }
@@ -101,7 +85,6 @@ export class Requester {
         ...options?.requestInit?.headers,
       },
     };
-    if (requestInit.body) requestInit.method = "POST";
     const url = this.buildURL(pathname, options);
     return CaptureErr("Fetch Error", async () => await fetch(url, requestInit));
   }
@@ -131,5 +114,15 @@ export class Requester {
     });
     if (isErr(res)) return res;
     return CaptureErr("JSON Error", async () => await res.json());
+  }
+}
+
+function setURLParameters(url: URL, options: Partial<RequesterOptions>) {
+  url.hash = options.hash ?? "";
+  url.pathname = options.pathname ?? "";
+  url.username = options.username ?? "";
+  url.password = options.password ?? "";
+  for (const [key, value] of options.searchParams?.entries() ?? []) {
+    url.searchParams.set(key, value);
   }
 }
