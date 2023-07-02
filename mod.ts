@@ -1,4 +1,4 @@
-import { CaptureErr, isErr } from "../deps.ts";
+import { CaptureErr, isErr } from "./deps.ts";
 
 interface RequesterOptions {
   hostname: string;
