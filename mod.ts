@@ -69,11 +69,9 @@ export class Requester {
       : "";
     const url = new URL(this.baseURL);
     url.pathname = path + pathname;
-    console.log(url);
     if (options) {
       setURLParameters(url, options);
     }
-    console.log(url);
     return url;
   }
   request(pathname: string, options?: Partial<RequesterOptions>) {
