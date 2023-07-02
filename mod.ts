@@ -69,9 +69,11 @@ export class Requester {
       : "";
     const url = new URL(this.baseURL);
     url.pathname = path + pathname;
+    console.log(url);
     if (options) {
       setURLParameters(url, options);
     }
+    console.log(url);
     return url;
   }
   request(pathname: string, options?: Partial<RequesterOptions>) {
@@ -118,10 +120,10 @@ export class Requester {
 }
 
 function setURLParameters(url: URL, options: Partial<RequesterOptions>) {
-  url.hash = options.hash ?? "";
-  url.pathname = options.pathname ?? "";
-  url.username = options.username ?? "";
-  url.password = options.password ?? "";
+  url.hash = options.hash ?? url.hash;
+  url.pathname = options.pathname ?? url.pathname;
+  url.username = options.username ?? url.username;
+  url.password = options.password ?? url.password;
   for (const [key, value] of options.searchParams?.entries() ?? []) {
     url.searchParams.set(key, value);
   }
