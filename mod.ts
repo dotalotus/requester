@@ -1,4 +1,4 @@
-import { CaptureErr, isErr } from "./deps.ts";
+import { CaptureErr, Err, isErr } from "./deps.ts";
 
 interface RequesterOptions {
   hostname: string;
@@ -33,11 +33,6 @@ const RequesterDefaultOptions: RequesterOptions = {
   searchParams: new URLSearchParams(),
 };
 
-type JSONObject = {
-  [key: string]: string | number | boolean | null | JSONArray | JSONObject;
-};
-
-type JSONArray = JSONObject[];
 export class Requester {
   baseURL: URL;
   requestInit: RequestInit;
@@ -88,18 +83,25 @@ export class Requester {
     const url = this.buildURL(pathname, options);
     return CaptureErr("Fetch Error", async () => await fetch(url, requestInit));
   }
-  async json(pathname: string, options?: Partial<RequesterOptions>) {
+  // deno-lint-ignore ban-types
+  async json<T extends object>(
+    pathname: string,
+    options?: Partial<RequesterOptions>,
+  ) {
     const res = await this.request(pathname, options);
     if (isErr(res)) return res;
     const json = await CaptureErr(
       "JSON Error",
-      async function JSON(): Promise<JSONObject> {
+      async function JSON(): Promise<T> {
         return await res.json();
       },
     );
     return json;
   }
-  async graphql(query: string) {
+  // deno-lint-ignore ban-types
+  async graphql<T extends object>(
+    query: string,
+  ): Promise<Err<"JSON Error"> | Err<"Fetch Error"> | T> {
     const res = await this.request("", {
       pathname: "graphql",
       requestInit: {
