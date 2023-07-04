@@ -38,7 +38,7 @@ export class Requester {
   requestInit: RequestInit;
   constructor(options: Partial<RequesterOptions>) {
     const opts: RequesterOptions = { ...RequesterDefaultOptions, ...options };
-    if (options.protocol) {
+    if (options.protocol && !options.port) {
       if (RequestProtocolPortsMap.has(options.protocol)) {
         if (opts.port !== RequestProtocolPortsMap.get(options.protocol)) {
           opts.port = RequestProtocolPortsMap.get(options.protocol)!;
