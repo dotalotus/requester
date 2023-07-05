@@ -69,7 +69,7 @@ export class Requester {
     }
     return url;
   }
-  request(pathname: string, options?: Partial<RequesterOptions>) {
+  async request(pathname: string, options?: Partial<RequesterOptions>) {
     const requestInit: RequestInit = {
       ...this.requestInit,
       ...options?.requestInit,
@@ -81,7 +81,10 @@ export class Requester {
       },
     };
     const url = this.buildURL(pathname, options);
-    return CaptureErr("Fetch Error", async () => await fetch(url, requestInit));
+    return await CaptureErr(
+      "Fetch Error",
+      async () => await fetch(url, requestInit),
+    );
   }
   // deno-lint-ignore ban-types
   async json<T extends object>(
